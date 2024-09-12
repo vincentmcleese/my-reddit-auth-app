@@ -6,8 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { RedIcon } from "lucide-react";
-import { useSession, signIn, signOut } from "next-auth/react";
+
+import { signIn } from "next-auth/react";
 
 export default function Login() {
   return (
