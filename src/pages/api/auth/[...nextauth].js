@@ -1,7 +1,10 @@
 import NextAuth from "next-auth";
 import RedditProvider from "next-auth/providers/reddit";
+import prisma from "@/lib/prisma";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 export default NextAuth({
+  adapter: PrismaAdapter(prisma),
   providers: [
     RedditProvider({
       clientId: process.env.REDDIT_CLIENT_ID,
@@ -15,15 +18,20 @@ export default NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, account }) {
-      if (account) {
-        token.accessToken = account.access_token;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      session.accessToken = token.accessToken;
+    async session({ session, user }) {
+      const account = await prisma.account.findFirst({
+        where: { userId: user.id, provider: "reddit" },
+      });
+      session.accessToken = account?.access_token ?? null;
       return session;
+    },
+  },
+  events: {
+    async createUser(message) {
+      console.log("User created:", message);
+    },
+    async linkAccount({ user, account, profile }) {
+      console.log("Account linked:", { user, account, profile });
     },
   },
 });
