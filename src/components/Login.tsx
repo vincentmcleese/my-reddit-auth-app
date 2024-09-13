@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Logo from "@/components/shared/logo";
 import {
   Card,
   CardContent,
@@ -13,11 +14,8 @@ export default function Login() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle className="text-4xl font-bold text-center text-orange-600">
-          Karm-a
-          <span className="text-5xl">h</span>
-          <span className="text-6xl">h</span>
-          <span className="text-7xl">h</span>
+        <CardTitle className="text-4xl font-bold text-center">
+          <Logo />
         </CardTitle>
       </CardHeader>
       <CardContent className="text-center">
@@ -27,13 +25,19 @@ export default function Login() {
       </CardContent>
       <CardFooter className="flex justify-center">
         <Button
-          className="bg-orange-500 hover:bg-orange-600 text-white"
-          size="lg"
+          className="w-full bg-[#FF4500] hover:bg-[#FF5722] text-white font-semibold py-2 px-4 rounded-full"
           onClick={() => signIn("reddit")}
         >
-          {/* <RedditIcon className="mr-2 h-5 w-5" /> */}
           Login with Reddit
         </Button>
+        {/* <Button
+          className="bg-reddit-orange hover:bg-orange-600 text-white"
+          size="lg"
+          onClick={() => signIn("reddit")}
+        > */}
+        {/* <RedditIcon className="mr-2 h-5 w-5" />
+          Login with Reddit
+        </Button> */}
       </CardFooter>
     </Card>
   );

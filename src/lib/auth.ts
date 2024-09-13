@@ -1,9 +1,9 @@
-import NextAuth from "next-auth";
+import type { NextAuthOptions } from "next-auth";
 import RedditProvider from "next-auth/providers/reddit";
-import prisma from "@/lib/prisma";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import prisma from "@/lib/prisma";
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     RedditProvider({
@@ -23,6 +23,7 @@ export default NextAuth({
         where: { userId: user.id, provider: "reddit" },
       });
       session.accessToken = account?.access_token ?? null;
+      session.user.id = user.id;
       return session;
     },
   },
@@ -34,4 +35,4 @@ export default NextAuth({
       console.log("Account linked:", { user, account, profile });
     },
   },
-});
+};
