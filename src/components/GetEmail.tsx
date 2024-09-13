@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Logo from "@/components/shared/logo";
+import { revalidatePath } from "next/cache";
 
 export default function GetEmail() {
   const { update } = useSession();
@@ -18,6 +19,7 @@ export default function GetEmail() {
         await update({ email });
         console.log("Email updated on client session:", email);
         // Refresh the current route to trigger a re-render of the parent component
+        revalidatePath("/");
         router.refresh();
       }
     } catch (error) {
