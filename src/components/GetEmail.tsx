@@ -2,6 +2,16 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { updateEmail } from "@/actions";
 import { useRouter } from "next/navigation";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import Logo from "@/components/shared/logo";
 
 export default function GetEmail() {
   const [email, setEmail] = useState("");
@@ -25,16 +35,32 @@ export default function GetEmail() {
   }
 
   return (
-    <form action={handleSubmit}>
-      <input
-        type="email"
-        name="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        placeholder="Enter your email"
-      />
-      <button type="submit">Submit</button>
-    </form>
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle className="text-4xl font-bold text-center">
+          <Logo />
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="text-center">
+        <p className="text-lg text-gray-600 mb-6">
+          Please provide your email to complete your account setup.
+        </p>
+        <form action={handleSubmit}>
+          <Input
+            type="email"
+            name="email"
+            required
+            placeholder="Enter your email"
+            className="mb-4"
+          />
+          <Button
+            type="submit"
+            className="w-full bg-[#FF4500] hover:bg-[#FF5722] text-white font-semibold py-2 px-4 rounded-full"
+          >
+            Submit Email
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

@@ -30,14 +30,6 @@ export default function Login() {
         >
           Login with Reddit
         </Button>
-        {/* <Button
-          className="bg-reddit-orange hover:bg-orange-600 text-white"
-          size="lg"
-          onClick={() => signIn("reddit")}
-        > */}
-        {/* <RedditIcon className="mr-2 h-5 w-5" />
-          Login with Reddit
-        </Button> */}
       </CardFooter>
     </Card>
   );
