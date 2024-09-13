@@ -1,20 +1,12 @@
-import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { updateEmail } from "@/actions";
 import { useRouter } from "next/navigation";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Logo from "@/components/shared/logo";
 
 export default function GetEmail() {
-  const [email, setEmail] = useState("");
   const { update } = useSession();
   const router = useRouter();
   async function handleSubmit(formData: FormData) {
