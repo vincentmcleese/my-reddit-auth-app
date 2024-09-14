@@ -115,16 +115,35 @@ export default function ScratchCard() {
     }
   }, [dimensions]);
 
-  const handleScratch = (x: number, y: number) => {
+  const handleScratch = (
+    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
+  ) => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
-    if (ctx) {
+    if (ctx && canvas) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width; // Scale factor for X
+      const scaleY = canvas.height / rect.height; // Scale factor for Y
+
+      let x, y;
+      if (e.type === "mousemove" || e.type === "mousedown") {
+        const mouseEvent = e as React.MouseEvent<HTMLCanvasElement>;
+        x = (mouseEvent.clientX - rect.left) * scaleX;
+        y = (mouseEvent.clientY - rect.top) * scaleY;
+      } else {
+        const touchEvent = e as React.TouchEvent<HTMLCanvasElement>;
+        x = (touchEvent.touches[0].clientX - rect.left) * scaleX;
+        y = (touchEvent.touches[0].clientY - rect.top) * scaleY;
+      }
+
       ctx.globalCompositeOperation = "destination-out";
       ctx.beginPath();
       ctx.arc(x, y, dimensions.width / 20, 0, Math.PI * 2);
       ctx.fill();
     }
   };
+
+  const preventDefault = (e: Event) => e.preventDefault();
 
   return (
     <Card
@@ -137,23 +156,43 @@ export default function ScratchCard() {
       <canvas
         ref={canvasRef}
         onMouseDown={() => {
-          const rect = canvasRef.current?.getBoundingClientRect();
-          const handleMouseMove = (moveEvent: MouseEvent) => {
-            if (rect) {
-              const x = moveEvent.clientX - rect.left;
-              const y = moveEvent.clientY - rect.top;
-              handleScratch(x, y);
-            }
-          };
-
-          document.addEventListener("mousemove", handleMouseMove);
-
-          const handleMouseUp = () => {
-            document.removeEventListener("mousemove", handleMouseMove);
-            document.removeEventListener("mouseup", handleMouseUp);
-          };
-
-          document.addEventListener("mouseup", handleMouseUp);
+          canvasRef.current?.addEventListener(
+            "mousemove",
+            handleScratch as unknown as (e: MouseEvent) => void
+          );
+          document.addEventListener("touchmove", preventDefault, {
+            passive: false,
+          });
+        }}
+        onMouseUp={() => {
+          canvasRef.current?.removeEventListener(
+            "mousemove",
+            handleScratch as unknown as (e: MouseEvent) => void
+          );
+          document.removeEventListener("touchmove", preventDefault);
+        }}
+        onMouseLeave={() => {
+          canvasRef.current?.removeEventListener(
+            "mousemove",
+            handleScratch as unknown as (e: MouseEvent) => void
+          );
+          document.removeEventListener("touchmove", preventDefault);
+        }}
+        onTouchStart={() => {
+          canvasRef.current?.addEventListener(
+            "touchmove",
+            handleScratch as unknown as (e: TouchEvent) => void
+          );
+          document.addEventListener("touchmove", preventDefault, {
+            passive: false,
+          });
+        }}
+        onTouchEnd={() => {
+          canvasRef.current?.removeEventListener(
+            "touchmove",
+            handleScratch as unknown as (e: TouchEvent) => void
+          );
+          document.removeEventListener("touchmove", preventDefault);
         }}
         className="absolute inset-0 w-full h-full cursor-pointer"
       />
