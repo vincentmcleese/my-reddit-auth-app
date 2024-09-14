@@ -14,10 +14,10 @@ export default function UserRouter() {
   console.log("UserRouter rendered. Status:", status, "Session:", session);
 
   useEffect(() => {
-    if (status === "authenticated") {
-      checkEmail(session?.user.id).then(setEmail);
+    if (status === "authenticated" && session?.user.id) {
+      checkEmail(session.user.id).then(setEmail);
     }
-  }, [status]);
+  }, [status, session?.user.id]); // Add session?.user.id to the dependency array
 
   if (status === "loading" || (status === "authenticated" && email === null)) {
     return <div>Loading...</div>;

@@ -12,7 +12,12 @@ declare module "next-auth" {
       name?: string | null;
       email?: string | null;
       image?: string | null;
-      karma?: number;
+      icon_img?: string | null;
+      total_karma?: number | null;
+      link_karma?: number | null;
+      comment_karma?: number | null;
+      is_employee?: boolean | null;
+      verified?: boolean | null;
     };
   }
   interface Profile {

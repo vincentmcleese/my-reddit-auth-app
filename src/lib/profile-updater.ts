@@ -1,5 +1,15 @@
 import prisma from "@/lib/prisma";
 
+export interface RedditProfile {
+  name?: string; // Changed to optional
+  icon_img?: string;
+  total_karma?: number;
+  link_karma?: number;
+  comment_karma?: number;
+  is_employee?: boolean;
+  verified?: boolean;
+}
+
 /**
  * Function to update the user's profile with data from Reddit's profile object.
  * @param userId - The user's ID as a string
@@ -7,18 +17,18 @@ import prisma from "@/lib/prisma";
  */
 export async function updateUserProfile(
   userId: string,
-  profile: Record<string, any>
+  profile: Partial<RedditProfile>
 ) {
   try {
     await prisma.user.update({
       where: { id: userId },
       data: {
-        icon_img: profile.icon_img || null,
-        total_karma: profile.total_karma || 0,
-        link_karma: profile.link_karma || 0,
-        comment_karma: profile.comment_karma || 0,
-        is_employee: profile.is_employee || false,
-        verified: profile.verified || false,
+        icon_img: profile.icon_img ?? null,
+        total_karma: profile.total_karma ?? 0,
+        link_karma: profile.link_karma ?? 0,
+        comment_karma: profile.comment_karma ?? 0,
+        is_employee: profile.is_employee ?? false,
+        verified: profile.verified ?? false,
       },
     });
   } catch (error) {
