@@ -2,7 +2,8 @@ import { NextAuthOptions } from "next-auth";
 import RedditProvider from "next-auth/providers/reddit";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
-import { updateUserProfile, RedditProfile } from "@/lib/profile-updater";
+import { storeTokens, refreshAccessToken } from "@/lib/token-handler";
+import { updateUserProfile } from "@/lib/profile-updater";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -19,45 +20,65 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
-      if (account?.provider === "reddit" && profile) {
+    async session({ session, user }) {
+      const account = await prisma.account.findFirst({
+        where: { userId: user.id, provider: "reddit" },
+      });
+
+      if (!account) return session;
+
+      if (account.expires_at && Date.now() > account.expires_at) {
+        console.log("Access token has expired, refreshing...");
         try {
-          await updateUserProfile(user.id, profile as Partial<RedditProfile>);
+          const refreshedTokens = await refreshAccessToken({
+            id: account.id,
+            refresh_token: account.refresh_token as string,
+          });
+          session.accessToken = refreshedTokens.access_token;
+          session.error = null;
         } catch (error) {
-          console.error("Error updating user profile during sign-in:", error);
+          session.error = "RefreshAccessTokenError";
+        }
+      } else {
+        session.accessToken = account.access_token;
+      }
+
+      session.user.id = user.id;
+      const dbUser = await prisma.user.findUnique({
+        where: { id: user.id },
+      });
+
+      if (dbUser) {
+        // Add custom user profile data to the session object
+        session.user.icon_img = dbUser.icon_img;
+        session.user.total_karma = dbUser.total_karma;
+        session.user.link_karma = dbUser.link_karma;
+        session.user.comment_karma = dbUser.comment_karma;
+        session.user.is_employee = dbUser.is_employee;
+        session.user.verified = dbUser.verified;
+      }
+      return session;
+    },
+
+    async signIn({ user, account, profile }) {
+      if (profile && account?.provider === "reddit") {
+        try {
+          // Update the user's profile
+          await updateUserProfile(user.id, profile);
+          // Store or update the access/refresh tokens
+          await storeTokens(user.id, {
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+            access_token: account.access_token || "",
+            refresh_token: account.refresh_token || "",
+            expires_at: account.expires_at,
+          });
+        } catch (error) {
+          console.error("Error during sign-in:", error);
           return false;
         }
       }
       return true;
     },
-    async session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-
-        const dbUser = await prisma.user.findUnique({
-          where: { id: user.id },
-          select: {
-            icon_img: true,
-            total_karma: true,
-            link_karma: true,
-            comment_karma: true,
-            is_employee: true,
-            verified: true,
-          },
-        });
-
-        if (dbUser) {
-          session.user.icon_img = dbUser.icon_img;
-          session.user.total_karma = dbUser.total_karma;
-          session.user.link_karma = dbUser.link_karma;
-          session.user.comment_karma = dbUser.comment_karma;
-          session.user.is_employee = dbUser.is_employee;
-          session.user.verified = dbUser.verified;
-        }
-      }
-      return session;
-    },
-    // ... other callbacks
   },
-  // ... other options
 };
