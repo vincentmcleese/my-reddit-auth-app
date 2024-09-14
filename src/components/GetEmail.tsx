@@ -1,7 +1,7 @@
 import { useSession } from "next-auth/react";
 import { updateEmail } from "@/actions";
 import { useRouter } from "next/navigation";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import PageCard from "@/components/shared/PageCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Logo from "@/components/shared/logo";
@@ -29,32 +29,30 @@ export default function GetEmail() {
   }
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle className="text-4xl font-bold text-center">
-          <Logo />
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="text-center">
-        <p className="text-lg text-gray-600 mb-6">
-          Please provide your email to complete your account setup.
-        </p>
-        <form action={handleSubmit}>
-          <Input
-            type="email"
-            name="email"
-            required
-            placeholder="Enter your email"
-            className="mb-4"
-          />
-          <Button
-            type="submit"
-            className="w-full bg-[#FF4500] hover:bg-[#FF5722] text-white font-semibold py-2 px-4 rounded-full"
-          >
-            Submit Email
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+    <PageCard
+      title={<Logo />}
+      footer={
+        <Button
+          type="submit"
+          form="email-form"
+          className="w-full bg-[#FF4500] hover:bg-[#FF5722] text-white font-semibold py-2 px-4 rounded-full"
+        >
+          Submit Email
+        </Button>
+      }
+    >
+      <p className="text-lg text-gray-600 mb-6">
+        Please provide your email to complete your account setup.
+      </p>
+      <form id="email-form" action={handleSubmit}>
+        <Input
+          type="email"
+          name="email"
+          required
+          placeholder="Enter your email"
+          className="mb-4"
+        />
+      </form>
+    </PageCard>
   );
 }

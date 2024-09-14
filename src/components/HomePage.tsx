@@ -2,13 +2,8 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import PageCard from "@/components/shared/PageCard";
 
 interface KarmaData {
   kind: string;
@@ -68,37 +63,34 @@ export default function HomePage() {
   }, [session?.accessToken]);
 
   return (
-    <Card className="max-w-2xl mx-auto mt-10 bg-white text-black">
-      <CardHeader>
-        <CardTitle className="text-black">
-          Welcome, {session?.user?.name}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="text-black">
-        <h2 className="text-lg font-semibold mt-4 text-black">Session Data:</h2>
-        <pre className="bg-gray-100 p-2 rounded mt-2 overflow-auto text-black">
+    <PageCard
+      title={`Welcome, ${session?.user?.name}`}
+      footer={
+        <Button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() => signOut()}
+        >
+          Sign out
+        </Button>
+      }
+    >
+      <div className="text-left">
+        <h2 className="text-lg font-semibold mt-4">Session Data:</h2>
+        <pre className="bg-gray-100 p-2 rounded mt-2 overflow-auto text-sm">
           {JSON.stringify(session, null, 2)}
         </pre>
 
-        <h2 className="text-lg font-semibold mt-4 text-black">Karma Data:</h2>
+        <h2 className="text-lg font-semibold mt-4">Karma Data:</h2>
         {karma ? (
-          <pre className="bg-gray-100 p-2 rounded mt-2 overflow-auto text-black">
+          <pre className="bg-gray-100 p-2 rounded mt-2 overflow-auto text-sm">
             {JSON.stringify(karma, null, 2)}
           </pre>
         ) : fetchError ? (
           <p className="mt-2 text-red-500">Error: {fetchError.message}</p>
         ) : (
-          <p className="mt-2 text-black">Fetching karma data...</p>
+          <p className="mt-2">Fetching karma data...</p>
         )}
-      </CardContent>
-      <CardFooter>
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={() => signOut()}
-        >
-          Sign out
-        </button>
-      </CardFooter>
-    </Card>
+      </div>
+    </PageCard>
   );
 }
