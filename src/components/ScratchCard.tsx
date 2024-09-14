@@ -27,12 +27,15 @@ export default function ScratchCard() {
 
     if (ctx && shineCtx) {
       const { width, height } = dimensions;
-
       // Set canvas sizes
-      canvas.width = width;
-      canvas.height = height;
-      shineCanvas.width = width;
-      shineCanvas.height = height;
+      if (canvas) {
+        canvas.width = width;
+        canvas.height = height;
+      }
+      if (shineCanvas) {
+        shineCanvas.width = width;
+        shineCanvas.height = height;
+      }
 
       // Create gold gradient
       const gradient = ctx.createLinearGradient(0, 0, width, height);
@@ -112,14 +115,10 @@ export default function ScratchCard() {
     }
   }, [dimensions]);
 
-  const handleScratch = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleScratch = (x: number, y: number) => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (ctx) {
-      const rect = canvas?.getBoundingClientRect();
-      const x = e.clientX - (rect?.left ?? 0);
-      const y = e.clientY - (rect?.top ?? 0);
-
       ctx.globalCompositeOperation = "destination-out";
       ctx.beginPath();
       ctx.arc(x, y, dimensions.width / 20, 0, Math.PI * 2);
@@ -137,21 +136,25 @@ export default function ScratchCard() {
       </div>
       <canvas
         ref={canvasRef}
-        onMouseDown={() =>
-          canvasRef.current?.addEventListener("mousemove", handleScratch as any)
-        }
-        onMouseUp={() =>
-          canvasRef.current?.removeEventListener(
-            "mousemove",
-            handleScratch as any
-          )
-        }
-        onMouseLeave={() =>
-          canvasRef.current?.removeEventListener(
-            "mousemove",
-            handleScratch as any
-          )
-        }
+        onMouseDown={() => {
+          const rect = canvasRef.current?.getBoundingClientRect();
+          const handleMouseMove = (moveEvent: MouseEvent) => {
+            if (rect) {
+              const x = moveEvent.clientX - rect.left;
+              const y = moveEvent.clientY - rect.top;
+              handleScratch(x, y);
+            }
+          };
+
+          document.addEventListener("mousemove", handleMouseMove);
+
+          const handleMouseUp = () => {
+            document.removeEventListener("mousemove", handleMouseMove);
+            document.removeEventListener("mouseup", handleMouseUp);
+          };
+
+          document.addEventListener("mouseup", handleMouseUp);
+        }}
         className="absolute inset-0 w-full h-full cursor-pointer"
       />
       <canvas

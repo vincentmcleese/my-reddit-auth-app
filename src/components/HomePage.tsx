@@ -58,6 +58,7 @@ export default function HomePage() {
         const { data, error } = await fetchKarma(session.accessToken);
         if (data) setKarma(data);
         if (error) setFetchError(error);
+        console.log(fetchError);
       }
     }
 
@@ -72,7 +73,7 @@ export default function HomePage() {
 
   return (
     <PageCard
-      title={`Welcome, ${session?.user?.name}`}
+      title={`Welcome, ${karma}`}
       footer={
         <Button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
