@@ -16,14 +16,16 @@ interface PageCardProps {
 
 export default function PageCard({ title, children, footer }: PageCardProps) {
   return (
-    <div className="px-4 sm:px-0">
-      <Card className="w-full max-w-md mx-auto">
+    <div className="px-4 sm:px-6 md:px-8 py-8 w-full max-w-full">
+      <Card className="w-full max-w-md mx-auto overflow-hidden">
         <CardHeader>
-          <CardTitle className="text-4xl font-bold text-center">
+          <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-bold text-center">
             {title}
           </CardTitle>
         </CardHeader>
-        <CardContent className="text-center">{children}</CardContent>
+        <CardContent className="text-center overflow-x-auto">
+          <div className="break-words overflow-hidden">{children}</div>
+        </CardContent>
         {footer && (
           <CardFooter className="flex justify-center">{footer}</CardFooter>
         )}

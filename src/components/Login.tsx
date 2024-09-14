@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import PageCard from "@/components/shared/PageCard";
 import Logo from "@/components/shared/logo";
+import VideoPlayer from "@/components/VideoPlayer";
 import { signIn } from "next-auth/react";
 
 export default function Login() {
@@ -16,6 +17,7 @@ export default function Login() {
         </Button>
       }
     >
+      <VideoPlayer />
       <p className="text-lg text-gray-600 mb-6">
         Connect with your Reddit account to start earning good karma!
       </p>
