@@ -1,4 +1,5 @@
 import React from "react";
+import { Card } from "@/components/ui/card";
 
 interface Boost {
   emoji: string;
@@ -16,79 +17,32 @@ const BoostList: React.FC<BoostListProps> = ({ boosts }) => {
   const multiplier = (1 + totalPoints / 100).toFixed(2); // Assume multiplier logic
 
   return (
-    <div style={{ width: "100%", fontFamily: "Arial, sans-serif" }}>
-      <div
-        style={{
-          backgroundColor: "#f8f8f8",
-          borderRadius: "12px",
-          padding: "20px",
-          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-          textAlign: "center",
-        }}
-      >
-        <div
-          style={{
-            fontSize: "20px",
-            fontWeight: "bold",
-            marginBottom: "10px",
-            color: "#ff4500",
-          }}
-        >
+    <div className="w-full font-sans">
+      <Card className="bg-gray-100 rounded-lg p-6 shadow-md text-center">
+        <div className="text-2xl font-bold mb-4 text-orange-500">
           🔥 Your Boosts 🔥
         </div>
-        <ul
-          style={{
-            listStyle: "none",
-            padding: "0",
-            margin: "0",
-          }}
-        >
+        <ul className="list-none p-0 m-0">
           {boosts.map((boost, index) => (
             <li
               key={index}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "10px",
-                marginBottom: "5px",
-                backgroundColor: "#fff",
-                borderRadius: "8px",
-                boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
-              }}
+              className="flex justify-between items-center p-4 mb-2 bg-white rounded-lg shadow-sm"
             >
-              <span style={{ fontSize: "24px" }}>{boost.emoji}</span>
-              <span
-                style={{
-                  fontWeight: "bold",
-                  textTransform: "capitalize",
-                  marginRight: "10px",
-                }}
-              >
+              <span className="text-2xl">{boost.emoji}</span>
+              <span className="font-bold capitalize mr-4">
                 {boost.description}
               </span>
-              <span
-                style={{
-                  fontWeight: "bold",
-                  color: "#ff4500",
-                }}
-              >
+              <span className="font-bold text-orange-500">
                 +{boost.points} points
               </span>
             </li>
           ))}
         </ul>
-        <div
-          style={{
-            marginTop: "20px",
-            fontSize: "18px",
-            fontWeight: "bold",
-            color: "#ff4500",
-          }}
-        >
+        <div className="mt-6 text-lg font-bold text-orange-500">
           <span>Total Boost Multiplier: </span>
-          <span style={{ fontSize: "24px" }}>{multiplier}x</span>
+          <span className="text-2xl">{multiplier}x</span>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

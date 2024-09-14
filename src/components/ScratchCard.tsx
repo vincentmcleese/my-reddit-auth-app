@@ -1,10 +1,16 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 
-export default function ScratchCard() {
+interface ScratchCardProps {
+  onScratchComplete: () => void;
+}
+
+export default function ScratchCard({ onScratchComplete }: ScratchCardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const shineCanvasRef = useRef<HTMLCanvasElement>(null);
   const [dimensions, setDimensions] = useState({ width: 300, height: 150 });
+  const scratchedPixelsRef = useRef(0);
+  const [totalPixels, setTotalPixels] = useState(0);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -31,6 +37,8 @@ export default function ScratchCard() {
       if (canvas) {
         canvas.width = width;
         canvas.height = height;
+        setTotalPixels(width * height);
+        console.log("Canvas dimensions set:", { width, height });
       }
       if (shineCanvas) {
         shineCanvas.width = width;
@@ -140,6 +148,23 @@ export default function ScratchCard() {
       ctx.beginPath();
       ctx.arc(x, y, dimensions.width / 20, 0, Math.PI * 2);
       ctx.fill();
+
+      // Track scratched area
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const scratchedPixelsCount = imageData.data.reduce(
+        (count, value, index) => {
+          if (index % 4 === 3 && value === 0) count++; // Check alpha channel
+          return count;
+        },
+        0
+      );
+
+      scratchedPixelsRef.current = scratchedPixelsCount;
+
+      // Check if scratched area exceeds 30%
+      if (scratchedPixelsCount / totalPixels > 0.3) {
+        onScratchComplete();
+      }
     }
   };
 

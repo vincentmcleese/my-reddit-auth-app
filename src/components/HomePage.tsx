@@ -1,79 +1,36 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import PageCard from "@/components/shared/PageCard";
 import ScratchCard from "@/components/ScratchCard";
 import BoostList from "@/components/BoostBadge";
-
-interface KarmaData {
-  kind: string;
-  data: {
-    children: Array<{
-      sr: string;
-      comment_karma: number;
-      link_karma: number;
-    }>;
-  };
-}
-
-type FetchError = Error | null;
-
-async function fetchKarma(
-  accessToken: string
-): Promise<{ data: KarmaData | null; error: FetchError }> {
-  try {
-    const response = await fetch("https://oauth.reddit.com/api/v1/me/karma", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "User-Agent": "MyApp/1.0.0",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data: KarmaData = await response.json();
-    return { data, error: null };
-  } catch (error) {
-    console.error("Error fetching karma:", error);
-    return {
-      data: null,
-      error:
-        error instanceof Error ? error : new Error("An unknown error occurred"),
-    };
-  }
-}
+import Logo from "@/components/shared/logo";
+import Confetti from "react-confetti";
 
 export default function HomePage() {
   const { data: session } = useSession();
-  const [karma, setKarma] = useState<KarmaData | null>(null);
-  const [fetchError, setFetchError] = useState<FetchError>(null);
-
-  useEffect(() => {
-    async function fetchKarmaData() {
-      if (session?.accessToken) {
-        const { data, error } = await fetchKarma(session.accessToken);
-        if (data) setKarma(data);
-        if (error) setFetchError(error);
-        console.log(fetchError);
-      }
-    }
-
-    fetchKarmaData();
-  }, [session?.accessToken]);
 
   const boosts = [
-    { emoji: "🌟", description: "karma", points: 100 },
+    {
+      emoji: "🌟",
+      description: ` ${session?.user?.total_karma} Karma`,
+      points: 50,
+    },
     { emoji: "🔥", description: "subreddit", points: 50 },
-    { emoji: "⚡", description: "streak", points: 30 },
+    { emoji: "⚡", description: "streak", points: 10 },
   ];
+
+  const [isScratched, setIsScratched] = useState(false);
+  const handleScratchComplete = () => {
+    setIsScratched(true);
+    console.log("Over 30% of the card has been scratched!");
+  };
 
   return (
     <PageCard
-      title={`Welcome, ${karma}`}
+      title={<Logo />}
       footer={
         <Button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -83,12 +40,23 @@ export default function HomePage() {
         </Button>
       }
     >
+      {isScratched && <Confetti />}
+
       <div className="w-full max-w-3xl mx-auto space-y-6">
         <div className="w-full">
-          <ScratchCard />
+          <ScratchCard onScratchComplete={handleScratchComplete} />
+          {isScratched && <div>Congratulations! </div>}
         </div>
         <div className="w-full">
-          <BoostList boosts={boosts} />
+          <BoostList
+            boosts={boosts.map((boost) => ({
+              ...boost,
+              points:
+                typeof boost.points === "string"
+                  ? parseInt(boost.points, 10)
+                  : boost.points,
+            }))}
+          />
         </div>
       </div>
       {/* <div className="text-left">
