@@ -4,6 +4,8 @@ import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import PageCard from "@/components/shared/PageCard";
+import ScratchCard from "@/components/ScratchCard";
+import BoostList from "@/components/BoostBadge";
 
 interface KarmaData {
   kind: string;
@@ -62,6 +64,12 @@ export default function HomePage() {
     fetchKarmaData();
   }, [session?.accessToken]);
 
+  const boosts = [
+    { emoji: "🌟", description: "karma", points: 100 },
+    { emoji: "🔥", description: "subreddit", points: 50 },
+    { emoji: "⚡", description: "streak", points: 30 },
+  ];
+
   return (
     <PageCard
       title={`Welcome, ${session?.user?.name}`}
@@ -74,7 +82,15 @@ export default function HomePage() {
         </Button>
       }
     >
-      <div className="text-left">
+      <div className="w-full max-w-3xl mx-auto space-y-6">
+        <div className="w-full">
+          <ScratchCard />
+        </div>
+        <div className="w-full">
+          <BoostList boosts={boosts} />
+        </div>
+      </div>
+      {/* <div className="text-left">
         <h2 className="text-lg font-semibold mt-4">Session Data:</h2>
         <pre className="bg-gray-100 p-2 rounded mt-2 overflow-auto text-sm">
           {JSON.stringify(session, null, 2)}
@@ -90,7 +106,7 @@ export default function HomePage() {
         ) : (
           <p className="mt-2">Fetching karma data...</p>
         )}
-      </div>
+      </div> */}
     </PageCard>
   );
 }
