@@ -6,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Logo from "@/components/shared/logo";
 
 interface PageCardProps {
   title: React.ReactNode;
