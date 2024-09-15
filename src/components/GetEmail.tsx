@@ -42,7 +42,8 @@ export default function GetEmail() {
       }
     >
       <p className="text-lg text-gray-600 mb-6">
-        Please provide your email to complete your account setup.
+        Please provide your email so we can send you information on your prize
+        if you win.
       </p>
       <form id="email-form" action={handleSubmit}>
         <Input

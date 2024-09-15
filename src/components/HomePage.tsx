@@ -87,7 +87,10 @@ export default function HomePage() {
             </div>
             <WinOddsBar filledSections={boosts} />
             <div className="flex items-center justify-center mt-2 text-sm">
-              <span>You have a boosted win chance!</span>
+              <span>
+                You have a boosted win chance! Keep your Karma high and your
+                streak going to increase your odds!
+              </span>
             </div>
           </div>
         </div>
