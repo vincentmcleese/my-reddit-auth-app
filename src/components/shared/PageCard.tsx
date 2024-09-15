@@ -32,3 +32,4 @@ export default function PageCard({ title, children, footer }: PageCardProps) {
     </div>
   );
 }
+c;
