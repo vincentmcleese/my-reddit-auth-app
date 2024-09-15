@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma";
-import { ObjectId } from "mongodb"; // Ensure this import is correct
 
 export interface RedditProfile {
   name?: string; // Changed to optional

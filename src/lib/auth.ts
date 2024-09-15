@@ -4,8 +4,6 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import { storeTokens, refreshAccessToken } from "@/lib/token-handler";
 import { updateUserProfile } from "@/lib/profile-updater";
-import { createUserProfile } from "@/lib/create-user";
-import { ObjectId } from "mongodb"; // Ensure this import is correct
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
