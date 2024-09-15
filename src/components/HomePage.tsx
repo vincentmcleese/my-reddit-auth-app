@@ -8,6 +8,7 @@ import BoostList from "@/components/BoostBadge";
 import Logo from "@/components/shared/logo";
 import Confetti from "react-confetti";
 import WinOddsBar from "@/components/WinOddsBar";
+import ScratchComplete from "@/components/ScratchComplete";
 
 export default function HomePage() {
   const { data: session } = useSession();
@@ -61,7 +62,7 @@ export default function HomePage() {
   };
 
   return (
-    <PageCard title={<Logo />} footer="footer">
+    <PageCard title={<Logo />} footer={`r/${session?.user?.name}`}>
       {isScratched && didWin && (
         <Confetti recycle={false} numberOfPieces={500} tweenDuration={2000} />
       )}
@@ -72,13 +73,17 @@ export default function HomePage() {
             message={winMessage}
             onScratchComplete={handleScratchComplete}
           />
-          {isScratched && <div>{winMessage}</div>}
+          {isScratched && (
+            <div>
+              <ScratchComplete outcome={didWin} />
+            </div>
+          )}
         </div>
         <div>
           {/* Show win odds */}
           <div className="mb-4">
             <div className="text-2xl font-bold text-reddit-orange">
-              {boosts}x Boosts
+              🔥 {boosts}x Boosts 🔥
             </div>
             <WinOddsBar filledSections={boosts} />
             <div className="flex items-center justify-center mt-2 text-sm">
