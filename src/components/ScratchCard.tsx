@@ -1,30 +1,50 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
+import { setCanvasSize, drawBackground } from "@/app/utils/canvasUtils";
+import { animateShineEffect } from "@/app/utils/shineUtils";
 
 interface ScratchCardProps {
   onScratchComplete: () => void;
+  message: string;
 }
 
-export default function ScratchCard({ onScratchComplete }: ScratchCardProps) {
+export default function ScratchCard({
+  onScratchComplete,
+  message,
+}: ScratchCardProps) {
+  // Refs for the canvas elements (main and shine layers)
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const shineCanvasRef = useRef<HTMLCanvasElement>(null);
+
+  // State to hold the canvas dimensions, initially set to default values
   const [dimensions, setDimensions] = useState({ width: 300, height: 150 });
+
+  // Ref to track the number of scratched pixels
   const scratchedPixelsRef = useRef(0);
+
+  // State to store the total number of pixels on the canvas
   const [totalPixels, setTotalPixels] = useState(0);
 
+  // Effect to update canvas dimensions when the window is resized
   useEffect(() => {
     const updateDimensions = () => {
       if (canvasRef.current) {
         const { width } = canvasRef.current.getBoundingClientRect();
-        setDimensions({ width, height: width / 2 });
+        setDimensions({ width, height: width / 2 }); // Maintain 2:1 aspect ratio
       }
     };
 
+    // Initial dimensions setup
     updateDimensions();
+
+    // Add event listener to update dimensions on window resize
     window.addEventListener("resize", updateDimensions);
+
+    // Clean up event listener on component unmount
     return () => window.removeEventListener("resize", updateDimensions);
   }, []);
 
+  // Effect to initialize canvas drawing and shine animation logic
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
@@ -33,96 +53,43 @@ export default function ScratchCard({ onScratchComplete }: ScratchCardProps) {
 
     if (ctx && shineCtx) {
       const { width, height } = dimensions;
-      // Set canvas sizes
+      // Set canvas sizes using the utility function
       if (canvas) {
-        canvas.width = width;
-        canvas.height = height;
-        setTotalPixels(width * height);
-        console.log("Canvas dimensions set:", { width, height });
+        setCanvasSize(canvas, width, height);
       }
       if (shineCanvas) {
-        shineCanvas.width = width;
-        shineCanvas.height = height;
+        setCanvasSize(shineCanvas, width, height);
       }
 
-      // Create gold gradient
-      const gradient = ctx.createLinearGradient(0, 0, width, height);
-      gradient.addColorStop(0, "#ffd700");
-      gradient.addColorStop(0.5, "#ffcc00");
-      gradient.addColorStop(1, "#ffd700");
+      // Store total number of pixels for scratch tracking
+      setTotalPixels(width * height);
 
-      const drawBackground = () => {
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, width, height);
+      // Draw the gold background using the utility function
+      drawBackground(ctx, width, height);
 
-        // Add shimmering effect
-        const shimmer = ctx.createLinearGradient(0, 0, width, 0);
-        shimmer.addColorStop(0, "rgba(255,255,255,0)");
-        shimmer.addColorStop(0.5, "rgba(255,255,255,0.5)");
-        shimmer.addColorStop(1, "rgba(255,255,255,0)");
-
-        ctx.fillStyle = shimmer;
-        ctx.fillRect(0, 0, width, height);
-
-        ctx.font = `${height / 6}px Arial`;
-        ctx.fillStyle = "#8b4513";
-        ctx.textAlign = "center";
-        ctx.fillText("Scratch here!", width / 2, height / 2);
-      };
-
-      drawBackground();
-
-      // Shine animation
+      // Shine animation setup
       let shinePosition = 0;
       let isAnimating = false;
-
-      const animateShine = () => {
-        if (!isAnimating) return;
-
-        shineCtx.clearRect(0, 0, width, height);
-
-        // Create shine gradient
-        const shineGradient = shineCtx.createLinearGradient(
-          shinePosition - width / 6,
-          height,
-          shinePosition,
-          0
-        );
-        shineGradient.addColorStop(0, "rgba(255,255,255,0)");
-        shineGradient.addColorStop(0.5, "rgba(255,255,255,0.8)");
-        shineGradient.addColorStop(1, "rgba(255,255,255,0)");
-
-        shineCtx.fillStyle = shineGradient;
-        shineCtx.beginPath();
-        shineCtx.moveTo(shinePosition - width / 6, height);
-        shineCtx.lineTo(shinePosition, 0);
-        shineCtx.lineTo(shinePosition + width / 30, 0);
-        shineCtx.lineTo(shinePosition - width / 7.5, height);
-        shineCtx.closePath();
-        shineCtx.fill();
-
-        // Move shine
-        shinePosition += width / 100;
-
-        // Reset position when off-screen
-        if (shinePosition > width + width / 6) {
-          isAnimating = false;
-          setTimeout(startShineAnimation, 5000);
-        } else {
-          requestAnimationFrame(animateShine);
-        }
-      };
 
       const startShineAnimation = () => {
         shinePosition = 0;
         isAnimating = true;
-        requestAnimationFrame(animateShine);
+        animateShineEffect(
+          shineCtx,
+          shinePosition,
+          width,
+          height,
+          isAnimating,
+          startShineAnimation
+        );
       };
 
+      // Start the shine animation
       startShineAnimation();
     }
   }, [dimensions]);
 
+  // Handle mouse or touch events to scratch the canvas
   const handleScratch = (
     e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
   ) => {
@@ -130,9 +97,10 @@ export default function ScratchCard({ onScratchComplete }: ScratchCardProps) {
     const ctx = canvas?.getContext("2d");
     if (ctx && canvas) {
       const rect = canvas.getBoundingClientRect();
-      const scaleX = canvas.width / rect.width; // Scale factor for X
-      const scaleY = canvas.height / rect.height; // Scale factor for Y
+      const scaleX = canvas.width / rect.width; // Scale factor for X axis
+      const scaleY = canvas.height / rect.height; // Scale factor for Y axis
 
+      // Determine the x and y position of the scratch event (mouse or touch)
       let x, y;
       if (e.type === "mousemove" || e.type === "mousedown") {
         const mouseEvent = e as React.MouseEvent<HTMLCanvasElement>;
@@ -144,16 +112,17 @@ export default function ScratchCard({ onScratchComplete }: ScratchCardProps) {
         y = (touchEvent.touches[0].clientY - rect.top) * scaleY;
       }
 
+      // Scratch the canvas (make pixels transparent)
       ctx.globalCompositeOperation = "destination-out";
       ctx.beginPath();
       ctx.arc(x, y, dimensions.width / 20, 0, Math.PI * 2);
       ctx.fill();
 
-      // Track scratched area
+      // Track the scratched area by checking how many pixels are transparent
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const scratchedPixelsCount = imageData.data.reduce(
         (count, value, index) => {
-          if (index % 4 === 3 && value === 0) count++; // Check alpha channel
+          if (index % 4 === 3 && value === 0) count++; // Check alpha channel for transparency
           return count;
         },
         0
@@ -161,13 +130,14 @@ export default function ScratchCard({ onScratchComplete }: ScratchCardProps) {
 
       scratchedPixelsRef.current = scratchedPixelsCount;
 
-      // Check if scratched area exceeds 30%
+      // If more than 30% of the area is scratched, trigger the completion callback
       if (scratchedPixelsCount / totalPixels > 0.3) {
         onScratchComplete();
       }
     }
   };
 
+  // Prevent default behavior for touchmove events to avoid scrolling
   const preventDefault = (e: Event) => e.preventDefault();
 
   return (
@@ -175,9 +145,12 @@ export default function ScratchCard({ onScratchComplete }: ScratchCardProps) {
       className="w-full relative overflow-hidden bg-gray-300"
       style={{ aspectRatio: "2 / 1" }}
     >
+      {/* Text to display when the scratch is complete */}
       <div className="absolute inset-0 flex items-center justify-center text-3xl font-bold text-gray-700">
-        YOU WON
+        {message}
       </div>
+
+      {/* Scratchable canvas */}
       <canvas
         ref={canvasRef}
         onMouseDown={() => {
@@ -221,6 +194,8 @@ export default function ScratchCard({ onScratchComplete }: ScratchCardProps) {
         }}
         className="absolute inset-0 w-full h-full cursor-pointer"
       />
+
+      {/* Shine canvas layer */}
       <canvas
         ref={shineCanvasRef}
         className="absolute inset-0 w-full h-full pointer-events-none"

@@ -1,8 +1,7 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import PageCard from "@/components/shared/PageCard";
 import ScratchCard from "@/components/ScratchCard";
 import BoostList from "@/components/BoostBadge";
@@ -22,6 +21,8 @@ export default function HomePage() {
     { emoji: "⚡", description: "streak", points: 10 },
   ];
 
+  const message = "YOU WON"; // Define the message to pass
+
   const [isScratched, setIsScratched] = useState(false);
   const handleScratchComplete = () => {
     setIsScratched(true);
@@ -29,22 +30,17 @@ export default function HomePage() {
   };
 
   return (
-    <PageCard
-      title={<Logo />}
-      footer={
-        <Button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={() => signOut()}
-        >
-          Sign out
-        </Button>
-      }
-    >
-      {isScratched && <Confetti />}
+    <PageCard title={<Logo />} footer="footer">
+      {isScratched && (
+        <Confetti recycle={false} numberOfPieces={500} tweenDuration={2000} />
+      )}
 
       <div className="w-full max-w-3xl mx-auto space-y-6">
         <div className="w-full">
-          <ScratchCard onScratchComplete={handleScratchComplete} />
+          <ScratchCard
+            message={message}
+            onScratchComplete={handleScratchComplete}
+          />
           {isScratched && <div>Congratulations! </div>}
         </div>
         <div className="w-full">
@@ -59,23 +55,6 @@ export default function HomePage() {
           />
         </div>
       </div>
-      {/* <div className="text-left">
-        <h2 className="text-lg font-semibold mt-4">Session Data:</h2>
-        <pre className="bg-gray-100 p-2 rounded mt-2 overflow-auto text-sm">
-          {JSON.stringify(session, null, 2)}
-        </pre>
-
-        <h2 className="text-lg font-semibold mt-4">Karma Data:</h2>
-        {karma ? (
-          <pre className="bg-gray-100 p-2 rounded mt-2 overflow-auto text-sm">
-            {JSON.stringify(karma, null, 2)}
-          </pre>
-        ) : fetchError ? (
-          <p className="mt-2 text-red-500">Error: {fetchError.message}</p>
-        ) : (
-          <p className="mt-2">Fetching karma data...</p>
-        )}
-      </div> */}
     </PageCard>
   );
 }
