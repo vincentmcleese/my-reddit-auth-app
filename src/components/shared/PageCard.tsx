@@ -15,7 +15,7 @@ interface PageCardProps {
 
 export default function PageCard({ title, children, footer }: PageCardProps) {
   return (
-    <div className="w-full px-4 sm:px-4 md:px-6 py-2 sm:py-4 md:py-6">
+    <div className="w-full max-w-full px-2 sm:px-4 md:px-6 py-2 sm:py-4 md:py-6 mx-auto lg:max-w-[400px]">
       <Card className="w-full max-w-full mx-auto overflow-hidden p-2 sm:p-4">
         <CardHeader>
           <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-bold text-center">
