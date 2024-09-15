@@ -4,6 +4,8 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import { storeTokens, refreshAccessToken } from "@/lib/token-handler";
 import { updateUserProfile } from "@/lib/profile-updater";
+import { createUserProfile } from "@/lib/create-user";
+import { ObjectId } from "mongodb"; // Ensure this import is correct
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -63,8 +65,13 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile }) {
       if (profile && account?.provider === "reddit") {
         try {
-          // Update the user's profile
+          console.log("SignIn callback - user:", user); // Log the user object
+          console.log("SignIn callback - account:", account); // Log the account object
+          console.log("SignIn callback - profile:", profile); // Log the profile object
+
+          // // Update the user's profile
           await updateUserProfile(user.id, profile);
+
           // Store or update the access/refresh tokens
           await storeTokens(user.id, {
             provider: account.provider,

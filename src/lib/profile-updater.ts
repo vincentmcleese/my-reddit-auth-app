@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { ObjectId } from "mongodb"; // Ensure this import is correct
 
 export interface RedditProfile {
   name?: string; // Changed to optional
@@ -20,6 +21,8 @@ export async function updateUserProfile(
   profile: Partial<RedditProfile>
 ) {
   try {
+    console.log("Received userId for profile update:", userId); // Log the user ID
+
     await prisma.user.update({
       where: { id: userId },
       data: {
