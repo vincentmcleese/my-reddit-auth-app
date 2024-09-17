@@ -27,10 +27,12 @@ export async function updateEmail(formData: FormData) {
     });
 
     console.log("User updated:", user);
+    // Revalidate the relevant path to ensure the cache is refreshed
+    // revalidatePath("/");
   } catch (error) {
     console.error("Error updating email:", error);
     throw new Error("Error updating email");
   }
 
-  return email;
+  return "success";
 }

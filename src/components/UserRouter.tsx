@@ -19,6 +19,12 @@ export default function UserRouter() {
     }
   }, [status, session?.user.id]); // Add session?.user.id to the dependency array
 
+  // Function to handle email update from GetEmail component
+  const handleEmailUpdated = (updatedEmail: string) => {
+    console.log("updating email in userRouter");
+    setEmail(updatedEmail); // Update the email state when the email is updated
+  };
+
   if (status === "loading" || (status === "authenticated" && email === null)) {
     return <div>Loading...</div>;
   }
@@ -28,7 +34,7 @@ export default function UserRouter() {
   }
 
   if (status === "authenticated" && email === false) {
-    return <GetEmail />;
+    return <GetEmail onEmailUpdated={handleEmailUpdated} />;
   }
 
   return <HomePage />;

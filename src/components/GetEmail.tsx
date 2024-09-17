@@ -5,22 +5,28 @@ import PageCard from "@/components/shared/PageCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Logo from "@/components/shared/logo";
-import { revalidatePath } from "next/cache";
 
-export default function GetEmail() {
+export default function GetEmail({
+  onEmailUpdated,
+}: {
+  onEmailUpdated: (email: string) => void;
+}) {
   const { update } = useSession();
   const router = useRouter();
   async function handleSubmit(formData: FormData) {
-    console.log("Form data:", formData);
+    console.log("the submit is triggered");
     try {
       const result = await updateEmail(formData);
+      console.log(result);
       if (result === "success") {
         const email = formData.get("email") as string;
         await update({ email });
         console.log("Email updated on client session:", email);
-        // Refresh the current route to trigger a re-render of the parent component
-        revalidatePath("/");
-        router.refresh();
+        // Notify the parent component that email is updated
+        console.log("Calling onEmailUpdated");
+
+        onEmailUpdated(email);
+        router.refresh(); // Refresh the current route to reflect changes
       }
     } catch (error) {
       console.error("Error updating email:", error);

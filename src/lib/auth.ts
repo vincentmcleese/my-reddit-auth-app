@@ -67,17 +67,34 @@ export const authOptions: NextAuthOptions = {
           console.log("SignIn callback - account:", account); // Log the account object
           console.log("SignIn callback - profile:", profile); // Log the profile object
 
-          // // Update the user's profile
-          // await updateUserProfile(user.id, profile);
+          // Query the database to find the user by provider and providerAccountId
+          const existingUser = await prisma.account.findUnique({
+            where: {
+              provider_providerAccountId: {
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+              },
+            },
+            include: {
+              user: true, // To get the related User model
+            },
+          });
 
-          // Store or update the access/refresh tokens
-          // await storeTokens(user.id, {
-          //   provider: account.provider,
-          //   providerAccountId: account.providerAccountId,
-          //   access_token: account.access_token || "",
-          //   refresh_token: account.refresh_token || "",
-          //   expires_at: account.expires_at,
-          // });
+          if (existingUser) {
+            // You now have access to the user's model ID (existingUser.user.id)
+            console.log("User ID:", existingUser.user.id);
+            // Update the user's profile
+            await updateUserProfile(existingUser.user.id, profile);
+            // Store or update the access/refresh tokens
+            await storeTokens(existingUser.user.id, {
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+              access_token: account.access_token || "",
+              refresh_token: account.refresh_token || "",
+              expires_at: account.expires_at,
+            });
+            return true;
+          }
         } catch (error) {
           console.error("Error during sign-in:", error);
           return false;
