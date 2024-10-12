@@ -67,7 +67,6 @@ export const authOptions: NextAuthOptions = {
           console.log("SignIn callback - account:", account); // Log the account object
           console.log("SignIn callback - profile:", profile); // Log the profile object
 
-          // Query the database to find the user by provider and providerAccountId
           const existingUser = await prisma.account.findUnique({
             where: {
               provider_providerAccountId: {
@@ -93,6 +92,7 @@ export const authOptions: NextAuthOptions = {
               refresh_token: account.refresh_token || "",
               expires_at: account.expires_at,
             });
+
             return true;
           }
         } catch (error) {

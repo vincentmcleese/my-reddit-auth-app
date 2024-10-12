@@ -35,27 +35,50 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  icon_img      String?
-  total_karma   Int?
-  link_karma    Int?
-  comment_karma Int?
-  is_employee   Boolean?
-  verified      Boolean?
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  name           String?
+  email          String?         @unique
+  emailVerified  DateTime?
+  image          String?
+  accounts       Account[]
+  sessions       Session[]
+  icon_img       String?
+  total_karma    Int?
+  link_karma     Int?
+  comment_karma  Int?
+  is_employee    Boolean?
+  verified       Boolean?
+  scratchResults ScratchResult[]
+  referrals      Referral[]      @relation("ReferrerToReferral")
+  referredBy     Referral[]      @relation("ReferredToReferral")
 }
 
 model VerificationToken {
-  id         String @id @default(auto()) @map("_id") @db.ObjectId
-  /// Field referred in an index, but found no data to define the type.
-  identifier Json?
-  /// Field referred in an index, but found no data to define the type.
-  token      Json?  @unique
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model ScratchResult {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @db.ObjectId
+  user        User     @relation(fields: [userId], references: [id])
+  scratchTime DateTime
+  won         Boolean
+  createdAt   DateTime @default(now())
+}
+
+model Referral {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  referrer   User     @relation("ReferrerToReferral", fields: [referrerId], references: [id])
+  referrerId String   @db.ObjectId
+  referred   User     @relation("ReferredToReferral", fields: [referredId], references: [id])
+  referredId String   @db.ObjectId
+  createdAt  DateTime @default(now())
+
+  @@index([referrerId])
+  @@index([referredId])
 }

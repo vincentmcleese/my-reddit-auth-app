@@ -4,31 +4,31 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 
 interface PageCardProps {
   title: React.ReactNode;
-  children: React.ReactNode;
   footer?: React.ReactNode;
+  children: React.ReactNode;
 }
 
-export default function PageCard({ title, children, footer }: PageCardProps) {
+export default function PageCard({ title, footer, children }: PageCardProps) {
   return (
-    <div className="w-full max-w-full px-2 sm:px-4 md:px-6 py-2 sm:py-4 md:py-6 mx-auto lg:max-w-[600px] xl:max-w-[800px]">
-      <Card className="w-full max-w-full mx-auto overflow-hidden p-2 sm:p-4">
-        <CardHeader>
-          <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-bold text-center">
-            {title}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="text-center overflow-x-auto">
-          <div className="break-words overflow-hidden">{children}</div>
-        </CardContent>
-        {footer && (
-          <CardFooter className="flex justify-center">{footer}</CardFooter>
-        )}
-      </Card>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#F2F2F7]">
+      <div className="w-full max-w-md">
+        <div className="mb-8 text-center">{title}</div>
+        <Card className="overflow-hidden shadow-lg bg-white">
+          <CardHeader>
+            <div className="w-full h-1 bg-[#007AFF]"></div>
+          </CardHeader>
+          <CardContent>{children}</CardContent>
+          {footer && (
+            <CardFooter className="bg-[#F2F2F7] text-center text-sm text-[#8E8E93]">
+              {footer}
+            </CardFooter>
+          )}
+        </Card>
+      </div>
     </div>
   );
 }

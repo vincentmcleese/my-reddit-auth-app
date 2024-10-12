@@ -1,10 +1,11 @@
 import { useSession } from "next-auth/react";
-import { updateEmail } from "@/actions";
-import { useRouter } from "next/navigation";
+import * as actions from "@/actions";
+import { useRouter, useSearchParams } from "next/navigation";
 import PageCard from "@/components/shared/PageCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Logo from "@/components/shared/logo";
+import { useEffect, useState } from "react";
 
 export default function GetEmail({
   onEmailUpdated,
@@ -13,10 +14,31 @@ export default function GetEmail({
 }) {
   const { update } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [referralProcessed, setReferralProcessed] = useState(false);
+
+  useEffect(() => {
+    const processReferral = async () => {
+      if (searchParams && searchParams.get("ref") && !referralProcessed) {
+        try {
+          const ref = searchParams.get("ref")!;
+          const result = await actions.updateReferral(ref);
+          if (result === "success") {
+            setReferralProcessed(true);
+            console.log("Referral processed successfully");
+          }
+        } catch (error) {
+          console.error("Error processing referral:", error);
+        }
+      }
+    };
+
+    processReferral();
+  }, [searchParams, referralProcessed]);
 
   async function handleSubmit(formData: FormData) {
     try {
-      const result = await updateEmail(formData);
+      const result = await actions.updateEmail(formData);
       if (result === "success") {
         const email = formData.get("email") as string;
         await update({ email });

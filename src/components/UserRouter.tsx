@@ -8,11 +8,8 @@ import GetEmail from "./GetEmail";
 import Dashboard from "./Dashboard";
 import ScratchExperience from "./ScratchExperience";
 import { checkEmail } from "@/actions";
-
-type ScratchResult = {
-  won: boolean;
-  // Add any other properties that might be part of the scratch result
-};
+import { useScratchCard, ScratchResult } from "@/hooks/useScratchCard";
+import { useReferralCount } from "@/hooks/useReferralCount";
 
 export default function UserRouter() {
   const { data: session, status } = useSession();
@@ -26,6 +23,16 @@ export default function UserRouter() {
     scratchResult: null,
   });
 
+  const {
+    isAvailable,
+    latestScratchResult,
+    todayScratchResults,
+    nextAvailableTime,
+    streak,
+    handleScratch: hookHandleScratch,
+  } = useScratchCard();
+  const referralCount = useReferralCount();
+
   useEffect(() => {
     if (status === "authenticated" && session?.user.id) {
       checkEmail(session.user.id).then((email) =>
@@ -34,16 +41,32 @@ export default function UserRouter() {
     }
   }, [status, session?.user.id]);
 
+  useEffect(() => {
+    if (latestScratchResult) {
+      setUserState((prev) => ({
+        ...prev,
+        scratchResult: latestScratchResult,
+      }));
+    }
+  }, [latestScratchResult]);
+
   const handleEmailUpdated = (email: string) =>
     setUserState((prev) => ({ ...prev, email }));
-  const handleScratch = () =>
-    setUserState((prev) => ({ ...prev, showScratch: true }));
-  const handleScratchComplete = (didWin: boolean) =>
+
+  const handleScratch = () => {
+    if (isAvailable) {
+      setUserState((prev) => ({ ...prev, showScratch: true }));
+    }
+  };
+
+  const handleScratchComplete = (didWin: boolean) => {
+    hookHandleScratch(didWin);
     setUserState((prev) => ({
       ...prev,
-      scratchResult: { won: didWin },
+      scratchResult: { won: didWin, scratchTime: new Date().toISOString() },
       showScratch: false,
     }));
+  };
 
   if (
     status === "loading" ||
@@ -58,6 +81,21 @@ export default function UserRouter() {
   if (userState.showScratch)
     return <ScratchExperience onComplete={handleScratchComplete} />;
   if (userState.scratchResult !== null)
-    return <HomePage scratchResult={userState.scratchResult} />;
-  return <Dashboard onScratch={handleScratch} />;
+    return (
+      <HomePage
+        scratchResult={latestScratchResult}
+        streak={streak}
+        referralCount={referralCount} // Add this
+      />
+    );
+  return (
+    <Dashboard
+      onScratch={handleScratch}
+      isAvailable={isAvailable}
+      nextAvailableTime={nextAvailableTime}
+      todayScratchResults={todayScratchResults}
+      streak={streak}
+      referralCount={referralCount} // Add this
+    />
+  );
 }

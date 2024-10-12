@@ -3,8 +3,8 @@
 import { useSession } from "next-auth/react";
 import PageCard from "@/components/shared/PageCard";
 import Logo from "@/components/shared/logo";
-import BoostList from "@/components/BoostBadge";
-import WinOddsBar from "@/components/WinOddsBar";
+import { ReferralWidget } from "@/components/ReferralWidget";
+import { BoostBreakdown } from "@/components/shared/BoostBreakdwon";
 
 // Define a type for the scratch result
 type ScratchResult = {
@@ -12,52 +12,34 @@ type ScratchResult = {
   // Add any other properties that might be part of the scratch result
 };
 
+interface HomePageProps {
+  scratchResult: ScratchResult | null;
+  streak: number;
+  referralCount: number;
+}
+
 export default function HomePage({
   scratchResult,
-}: {
-  scratchResult: ScratchResult | null;
-}) {
+  streak,
+  referralCount,
+}: HomePageProps) {
   const { data: session } = useSession();
-
-  const boostArray = [
-    {
-      title: `High Karma`,
-      description: ` ${session?.user?.total_karma} Karma`,
-      boost: 2,
-    },
-    {
-      title: `Streak`,
-      description: `1 day streak`,
-      boost: 1,
-    },
-  ];
-
-  const totalBoosts = boostArray.reduce(
-    (total, boost) => total + boost.boost,
-    0
-  );
 
   return (
     <PageCard title={<Logo />} footer={`r/${session?.user?.name}`}>
-      <div className="w-full max-w-3xl mx-auto space-y-6">
-        <div className="text-2xl font-bold text-center">
+      <ReferralWidget />
+      <div className="space-y-6">
+        <div className="text-2xl font-semibold text-center">
           {scratchResult?.won
             ? "Congratulations! You won!"
             : "Better luck next time!"}
         </div>
-        <div>
-          <div className="text-2xl font-bold text-reddit-orange">
-            🔥 {totalBoosts}x Boosts 🔥
-          </div>
-          <WinOddsBar filledSections={totalBoosts} />
-          <div className="flex items-center justify-center mt-2 text-sm">
-            <span>
-              Keep your Karma high and your streak going to increase your odds!
-            </span>
-          </div>
+
+        <BoostBreakdown referralCount={referralCount} streak={streak} />
+        <div className="text-center text-gray-600">
+          Keep your Karma high and your streak going to increase your odds!
         </div>
-        <BoostList boosts={boostArray} />
-        <div className="text-center">
+        <div className="text-center font-semibold">
           Come back tomorrow for another chance to win!
         </div>
       </div>
