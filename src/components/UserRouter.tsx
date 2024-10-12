@@ -25,7 +25,6 @@ export default function UserRouter() {
 
   const {
     isAvailable,
-
     todayScratchResults,
     nextAvailableTime,
     streak,

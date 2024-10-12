@@ -5,6 +5,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import Image from "next/image";
 
 interface PageCardProps {
   title: React.ReactNode;
@@ -14,7 +15,7 @@ interface PageCardProps {
 
 export default function PageCard({ title, footer, children }: PageCardProps) {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#F2F2F7]">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">{title}</div>
         <Card className="overflow-hidden shadow-lg bg-white">
@@ -28,6 +29,10 @@ export default function PageCard({ title, footer, children }: PageCardProps) {
             </CardFooter>
           )}
         </Card>
+
+        <div className="mt-8 flex justify-center">
+          <Image src="/PrimaryLogo_1.png" alt="logo" width={100} height={100} />
+        </div>
       </div>
     </div>
   );
