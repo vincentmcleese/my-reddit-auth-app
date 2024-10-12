@@ -10,6 +10,7 @@ import ScratchExperience from "./ScratchExperience";
 import { checkEmail } from "@/actions";
 import { useScratchCard, ScratchResult } from "@/hooks/useScratchCard";
 import { useReferralCount } from "@/hooks/useReferralCount";
+import LoadingVideo from "@/components/shared/LoadingVideo";
 
 export default function UserRouter() {
   const { data: session, status } = useSession();
@@ -64,7 +65,7 @@ export default function UserRouter() {
     status === "loading" ||
     (status === "authenticated" && userState.email === null)
   ) {
-    return <div>Loading...</div>;
+    return <LoadingVideo />;
   }
 
   if (status === "unauthenticated") return <Login />;

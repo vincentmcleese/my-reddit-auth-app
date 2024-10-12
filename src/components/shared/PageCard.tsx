@@ -15,16 +15,25 @@ interface PageCardProps {
 
 export default function PageCard({ title, footer, children }: PageCardProps) {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-white sm:bg-transparent">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">{title}</div>
-        <Card className="overflow-hidden shadow-lg bg-white">
+        <div className="sm:hidden w-full">
+          <div className="w-full h-1 bg-[#007AFF]"></div>
+          <div className="p-4">{children}</div>
+          {footer && (
+            <div className="bg-[#F2F2F7] text-center text-sm text-[#8E8E93] p-4">
+              {footer}
+            </div>
+          )}
+        </div>
+        <Card className="hidden sm:block overflow-hidden shadow-lg bg-white">
           <CardHeader>
             <div className="w-full h-1 bg-[#007AFF]"></div>
           </CardHeader>
-          <CardContent>{children}</CardContent>
+          <CardContent className="p-4">{children}</CardContent>
           {footer && (
-            <CardFooter className="bg-[#F2F2F7] text-center text-sm text-[#8E8E93]">
+            <CardFooter className="bg-[#F2F2F7] text-center text-sm text-[#8E8E93] p-4">
               {footer}
             </CardFooter>
           )}
