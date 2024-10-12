@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import PageCard from "@/components/shared/PageCard";
 import Logo from "@/components/shared/logo";
@@ -18,6 +19,11 @@ interface DashboardProps {
   karma: number;
 }
 
+const fadeInVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
 export default function Dashboard({
   onScratch,
   isAvailable,
@@ -30,28 +36,56 @@ export default function Dashboard({
 
   return (
     <PageCard title={<Logo />} footer={`r/${session?.user?.name}`}>
-      <ReferralWidget />
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeInVariants}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        <ReferralWidget />
+      </motion.div>
       <div className="space-y-6">
-        <div className="text-2xl font-semibold text-center">
-          {isAvailable ? "Ready to Scratch" : "Next Scratch"}
-        </div>
-        <div className="text-center text-gray-600">
-          {isAvailable
-            ? "Your card is ready to be scratched!"
-            : `Available at ${format(nextAvailableTime, "h:mm a")}`}
-        </div>
-        <Button
-          className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 rounded-full transition-all duration-300 ease-in-out transform hover:scale-105"
-          onClick={onScratch}
-          disabled={!isAvailable}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeInVariants}
+          transition={{ duration: 0.5, delay: 0.4 }}
         >
-          {isAvailable ? "Scratch Now" : "Scratch Unavailable"}
-        </Button>
-        <BoostBreakdown
-          referralCount={referralCount}
-          streak={streak}
-          karma={karma}
-        />
+          <div className="text-2xl font-semibold text-center">
+            {isAvailable ? "Ready to Scratch" : "Next Scratch"}
+          </div>
+          <div className="text-center text-gray-600">
+            {isAvailable
+              ? "Your card is ready to be scratched!"
+              : `Available at ${format(nextAvailableTime, "h:mm a")}`}
+          </div>
+        </motion.div>
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeInVariants}
+          transition={{ duration: 0.5, delay: 0.6 }}
+        >
+          <Button
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 rounded-full transition-all duration-300 ease-in-out transform hover:scale-105"
+            onClick={onScratch}
+            disabled={!isAvailable}
+          >
+            {isAvailable ? "Scratch Now" : "Scratch Unavailable"}
+          </Button>
+        </motion.div>
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeInVariants}
+          transition={{ duration: 0.5, delay: 0.8 }}
+        >
+          <BoostBreakdown
+            referralCount={referralCount}
+            streak={streak}
+            karma={karma}
+          />
+        </motion.div>
       </div>
     </PageCard>
   );
