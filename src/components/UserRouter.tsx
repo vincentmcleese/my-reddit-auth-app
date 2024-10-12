@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import HomePage from "./HomePage";
+
 import Login from "./Login";
 import GetEmail from "./GetEmail";
 import Dashboard from "./Dashboard";
@@ -25,11 +25,12 @@ export default function UserRouter() {
 
   const {
     isAvailable,
-    latestScratchResult,
+
     todayScratchResults,
     nextAvailableTime,
     streak,
     handleScratch: hookHandleScratch,
+    refetchScratchState,
   } = useScratchCard();
   const referralCount = useReferralCount();
 
@@ -41,15 +42,6 @@ export default function UserRouter() {
     }
   }, [status, session?.user.id]);
 
-  useEffect(() => {
-    if (latestScratchResult) {
-      setUserState((prev) => ({
-        ...prev,
-        scratchResult: latestScratchResult,
-      }));
-    }
-  }, [latestScratchResult]);
-
   const handleEmailUpdated = (email: string) =>
     setUserState((prev) => ({ ...prev, email }));
 
@@ -59,13 +51,14 @@ export default function UserRouter() {
     }
   };
 
-  const handleScratchComplete = (didWin: boolean) => {
-    hookHandleScratch(didWin);
+  const handleScratchComplete = async (didWin: boolean) => {
+    await hookHandleScratch(didWin);
     setUserState((prev) => ({
       ...prev,
       scratchResult: { won: didWin, scratchTime: new Date().toISOString() },
       showScratch: false,
     }));
+    await refetchScratchState();
   };
 
   if (
@@ -83,15 +76,6 @@ export default function UserRouter() {
   // Get the karma value from the session
   const karma = session?.user.total_karma || 0;
 
-  if (userState.scratchResult !== null)
-    return (
-      <HomePage
-        scratchResult={latestScratchResult}
-        streak={streak}
-        referralCount={referralCount}
-        karma={karma}
-      />
-    );
   return (
     <Dashboard
       onScratch={handleScratch}

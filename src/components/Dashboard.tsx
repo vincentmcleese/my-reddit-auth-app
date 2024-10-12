@@ -40,13 +40,6 @@ export default function Dashboard({
             ? "Your card is ready to be scratched!"
             : `Available at ${format(nextAvailableTime, "h:mm a")}`}
         </div>
-
-        <BoostBreakdown
-          referralCount={referralCount}
-          streak={streak}
-          karma={karma}
-        />
-
         <Button
           className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 rounded-full transition-all duration-300 ease-in-out transform hover:scale-105"
           onClick={onScratch}
@@ -54,6 +47,11 @@ export default function Dashboard({
         >
           {isAvailable ? "Scratch Now" : "Scratch Unavailable"}
         </Button>
+        <BoostBreakdown
+          referralCount={referralCount}
+          streak={streak}
+          karma={karma}
+        />
       </div>
     </PageCard>
   );
