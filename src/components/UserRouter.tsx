@@ -80,12 +80,16 @@ export default function UserRouter() {
     return <GetEmail onEmailUpdated={handleEmailUpdated} />;
   if (userState.showScratch)
     return <ScratchExperience onComplete={handleScratchComplete} />;
+  // Get the karma value from the session
+  const karma = session?.user.total_karma || 0;
+
   if (userState.scratchResult !== null)
     return (
       <HomePage
         scratchResult={latestScratchResult}
         streak={streak}
-        referralCount={referralCount} // Add this
+        referralCount={referralCount}
+        karma={karma}
       />
     );
   return (
@@ -95,7 +99,8 @@ export default function UserRouter() {
       nextAvailableTime={nextAvailableTime}
       todayScratchResults={todayScratchResults}
       streak={streak}
-      referralCount={referralCount} // Add this
+      referralCount={referralCount}
+      karma={karma}
     />
   );
 }

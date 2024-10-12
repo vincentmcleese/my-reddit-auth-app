@@ -15,6 +15,7 @@ interface DashboardProps {
   todayScratchResults: ScratchResult[];
   streak: number;
   referralCount: number;
+  karma: number;
 }
 
 export default function Dashboard({
@@ -23,6 +24,7 @@ export default function Dashboard({
   nextAvailableTime,
   streak,
   referralCount,
+  karma,
 }: DashboardProps) {
   const { data: session } = useSession();
 
@@ -39,7 +41,11 @@ export default function Dashboard({
             : `Available at ${format(nextAvailableTime, "h:mm a")}`}
         </div>
 
-        <BoostBreakdown referralCount={referralCount} streak={streak} />
+        <BoostBreakdown
+          referralCount={referralCount}
+          streak={streak}
+          karma={karma}
+        />
 
         <Button
           className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 rounded-full transition-all duration-300 ease-in-out transform hover:scale-105"

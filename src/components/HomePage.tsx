@@ -16,12 +16,14 @@ interface HomePageProps {
   scratchResult: ScratchResult | null;
   streak: number;
   referralCount: number;
+  karma: number;
 }
 
 export default function HomePage({
   scratchResult,
   streak,
   referralCount,
+  karma,
 }: HomePageProps) {
   const { data: session } = useSession();
 
@@ -35,7 +37,11 @@ export default function HomePage({
             : "Better luck next time!"}
         </div>
 
-        <BoostBreakdown referralCount={referralCount} streak={streak} />
+        <BoostBreakdown
+          referralCount={referralCount}
+          streak={streak}
+          karma={karma}
+        />
         <div className="text-center text-gray-600">
           Keep your Karma high and your streak going to increase your odds!
         </div>

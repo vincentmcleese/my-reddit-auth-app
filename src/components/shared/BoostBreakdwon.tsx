@@ -10,14 +10,25 @@ export interface Boost {
 interface BoostBreakdownProps {
   referralCount: number;
   streak: number;
+  karma: number;
 }
 
-export function BoostBreakdown({ referralCount, streak }: BoostBreakdownProps) {
+export function BoostBreakdown({
+  referralCount,
+  streak,
+  karma,
+}: BoostBreakdownProps) {
+  const karmaBoost = Math.floor(karma / 500);
   const boostArray: Boost[] = [
     {
       title: "Base",
       description: "Everyone starts here",
       boost: 1,
+    },
+    {
+      title: "Karma",
+      description: `${karma} karma, (1 boost per 500 karma).`,
+      boost: karmaBoost,
     },
     {
       title: "Streak",
