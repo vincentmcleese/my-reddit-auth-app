@@ -13,20 +13,15 @@ export default function GetEmail({
 }) {
   const { update } = useSession();
   const router = useRouter();
+
   async function handleSubmit(formData: FormData) {
-    console.log("the submit is triggered");
     try {
       const result = await updateEmail(formData);
-      console.log(result);
       if (result === "success") {
         const email = formData.get("email") as string;
         await update({ email });
-        console.log("Email updated on client session:", email);
-        // Notify the parent component that email is updated
-        console.log("Calling onEmailUpdated");
-
         onEmailUpdated(email);
-        router.refresh(); // Refresh the current route to reflect changes
+        router.refresh();
       }
     } catch (error) {
       console.error("Error updating email:", error);

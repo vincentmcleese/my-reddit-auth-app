@@ -1,22 +1,11 @@
-"use client";
-
 import { useSession } from "next-auth/react";
 import PageCard from "@/components/shared/PageCard";
 import Logo from "@/components/shared/logo";
 import BoostList from "@/components/BoostBadge";
 import WinOddsBar from "@/components/WinOddsBar";
+import { Button } from "@/components/ui/button";
 
-// Define a type for the scratch result
-type ScratchResult = {
-  won: boolean;
-  // Add any other properties that might be part of the scratch result
-};
-
-export default function HomePage({
-  scratchResult,
-}: {
-  scratchResult: ScratchResult | null;
-}) {
+export default function Dashboard({ onScratch }: { onScratch: () => void }) {
   const { data: session } = useSession();
 
   const boostArray = [
@@ -41,9 +30,7 @@ export default function HomePage({
     <PageCard title={<Logo />} footer={`r/${session?.user?.name}`}>
       <div className="w-full max-w-3xl mx-auto space-y-6">
         <div className="text-2xl font-bold text-center">
-          {scratchResult?.won
-            ? "Congratulations! You won!"
-            : "Better luck next time!"}
+          You can scratch your card now!
         </div>
         <div>
           <div className="text-2xl font-bold text-reddit-orange">
@@ -52,14 +39,18 @@ export default function HomePage({
           <WinOddsBar filledSections={totalBoosts} />
           <div className="flex items-center justify-center mt-2 text-sm">
             <span>
-              Keep your Karma high and your streak going to increase your odds!
+              You have a boosted win chance! Keep your Karma high and your
+              streak going to increase your odds!
             </span>
           </div>
         </div>
         <BoostList boosts={boostArray} />
-        <div className="text-center">
-          Come back tomorrow for another chance to win!
-        </div>
+        <Button
+          className="w-full bg-[#FF4500] hover:bg-[#FF5722] text-white font-semibold py-2 px-4 rounded-full"
+          onClick={onScratch}
+        >
+          Scratch Now!
+        </Button>
       </div>
     </PageCard>
   );
