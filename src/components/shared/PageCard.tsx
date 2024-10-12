@@ -40,7 +40,7 @@ export default function PageCard({ title, footer, children }: PageCardProps) {
         </Card>
 
         <div className="mt-8 flex justify-center">
-          <Image src="/PrimaryLogo_1.png" alt="logo" width={100} height={100} />
+          <Image src="/SecondaryLogo.png" alt="logo" width={100} height={100} />
         </div>
       </div>
     </div>
