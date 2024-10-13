@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export function ReferralWidget() {
   const { data: session } = useSession();
@@ -20,19 +22,19 @@ export function ReferralWidget() {
       <h3 className="text-xl font-bold mb-4 text-white">
         Get a referral boost:
       </h3>
-      <div className="flex items-center bg-white rounded-full overflow-hidden shadow-inner">
-        <input
+      <div className="flex items-stretch">
+        <Input
           type="text"
           value={referralUrl}
           readOnly
-          className="flex-grow p-3 text-gray-700 focus:outline-none"
+          className="flex-grow bg-white text-gray-700 focus:outline-none rounded-l-full border-r-0"
         />
-        <button
+        <Button
           onClick={copyToClipboard}
-          className="bg-[#0079D3] text-white px-6 py-3 font-semibold hover:bg-[#0056b3] transition-colors"
+          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-r-full transition-all duration-300 ease-in-out transform hover:scale-105 border-l-0"
         >
           {copied ? "Copied!" : "Copy"}
-        </button>
+        </Button>
       </div>
     </div>
   );

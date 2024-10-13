@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { AuthProvider } from "@/app/AuthProvider";
 import { useState, useEffect } from "react";
+import LogoOutline from "@/components/shared/LogoOutline";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -56,6 +57,9 @@ export default function RootLayout({
               opacity: 0.2,
             }}
           />
+
+          {/* Logo Outline */}
+          <LogoOutline />
 
           {/* Animated green accent */}
           <div
