@@ -6,8 +6,9 @@ import Logo from "@/components/shared/logo";
 import { ReferralWidget } from "@/components/ReferralWidget";
 import { Button } from "@/components/ui/button";
 import { ScratchResult } from "@/hooks/useScratchCard";
-import { format } from "date-fns";
+
 import { BoostBreakdown } from "@/components/shared/BoostBreakdwon";
+import CountdownClock from "./CountdownClock";
 
 interface DashboardProps {
   onScratch: () => void;
@@ -27,7 +28,6 @@ const fadeInVariants = {
 export default function Dashboard({
   onScratch,
   isAvailable,
-  nextAvailableTime,
   streak,
   referralCount,
   karma,
@@ -55,9 +55,11 @@ export default function Dashboard({
             {isAvailable ? "Ready to Scratch" : "Next Scratch"}
           </div>
           <div className="text-center text-gray-600">
-            {isAvailable
-              ? "Your card is ready to be scratched!"
-              : `Available at ${format(nextAvailableTime, "h:mm a")}`}
+            {isAvailable ? (
+              "Your card is ready to be scratched!"
+            ) : (
+              <CountdownClock />
+            )}
           </div>
         </motion.div>
         <motion.div
