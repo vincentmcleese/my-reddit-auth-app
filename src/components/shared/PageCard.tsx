@@ -6,6 +6,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import Image from "next/image";
+import Link from "next/link";
 
 interface PageCardProps {
   title: React.ReactNode;
@@ -38,7 +39,19 @@ export default function PageCard({ title, footer, children }: PageCardProps) {
             </CardFooter>
           )}
         </Card>
-
+        <div className="mt-4 mb-4 text-white text-sm text-center">
+          <Link href="/privacy-policy" className="hover:underline">
+            Privacy Policy
+          </Link>
+          <span className="mx-2">|</span>
+          <Link href="/about" className="hover:underline">
+            About 6degrees
+          </Link>
+          <span className="mx-2">|</span>
+          <Link href="/contact" className="hover:underline">
+            Contact
+          </Link>
+        </div>
         <div className="mt-8 flex justify-center">
           <Image src="/SecondaryLogo.png" alt="logo" width={100} height={100} />
         </div>
