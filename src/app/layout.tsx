@@ -45,35 +45,24 @@ export default function RootLayout({
     <AuthProvider>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-900 text-white`}
         >
-          {/* Dotted background */}
-          <div
-            className="fixed inset-0 z-0"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle, #ffffff 1px, transparent 1px)",
-              backgroundSize: "100px 100px",
-              opacity: 0.2,
-            }}
-          />
-
           {/* Logo Outline */}
           <LogoOutline />
 
-          {/* Animated green accent */}
+          {/* Animated orange accent */}
           <div
             className="fixed w-64 h-64 rounded-full bg-orange-500 blur-3xl z-10"
             style={{
               left: mousePosition.x - 128,
               top: mousePosition.y - 128,
               transition: "all 0.5s ease-out",
-              opacity: 0.2,
+              opacity: 0.15, // Slightly reduced opacity
             }}
           />
 
           {/* Main content */}
-          <div className="relative z-20 min-h-screen flex items-center justify-center">
+          <div className="relative z-20 min-h-screen flex flex-col">
             {children}
           </div>
         </body>
