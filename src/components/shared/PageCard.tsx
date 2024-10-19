@@ -17,7 +17,7 @@ interface PageCardProps {
 export default function PageCard({ title, footer, children }: PageCardProps) {
   return (
     <div className="flex flex-col items-center justify-start p-4 bg-white sm:bg-transparent">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md flex-basis-full">
         <div className="mb-8 text-center">{title}</div>
         <div className="sm:hidden w-full">
           <div className="w-full h-1 bg-[#007AFF]"></div>

@@ -176,13 +176,15 @@ export default function ScratchCard({
           );
           document.removeEventListener("touchmove", preventDefault);
         }}
-        onTouchStart={() => {
+        onTouchStart={(e) => {
+          e.preventDefault();
           canvasRef.current?.addEventListener(
             "touchmove",
-            handleScratch as unknown as (e: TouchEvent) => void
+            handleScratch as unknown as (e: TouchEvent) => void,
+            { passive: true }
           );
           document.addEventListener("touchmove", preventDefault, {
-            passive: false,
+            passive: true,
           });
         }}
         onTouchEnd={() => {
@@ -192,7 +194,7 @@ export default function ScratchCard({
           );
           document.removeEventListener("touchmove", preventDefault);
         }}
-        className="absolute inset-0 w-full h-full cursor-pointer"
+        className="absolute inset-0 w-full h-full cursor-pointer will-change-contents"
       />
 
       {/* Shine canvas layer */}
