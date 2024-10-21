@@ -20,7 +20,7 @@ export default function UserPage() {
     >
       <div className="text-left">
         <h2 className="text-lg font-semibold mt-4">Session Data:</h2>
-        <pre className="bg-gray-100 p-2 rounded mt-2 overflow-auto text-sm">
+        <pre className="bg-gray-100 p-2 text-black rounded mt-2 overflow-auto text-sm">
           {JSON.stringify(session, null, 2)}
         </pre>
       </div>

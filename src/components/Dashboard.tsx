@@ -10,7 +10,6 @@ import { ScratchResult } from "@/hooks/useScratchCard";
 
 import { BoostBreakdown } from "@/components/shared/BoostBreakdwon";
 import CountdownClock from "./CountdownClock";
-import Link from "next/link";
 
 interface DashboardProps {
   onScratch: () => void;
@@ -112,21 +111,6 @@ export default function Dashboard({
           </motion.div>
         </div>
       </PageCard>
-
-      {/* Footer links */}
-      <div className="mt-4 mb-4 text-white text-sm">
-        <Link href="/privacy-policy" className="hover:underline">
-          Privacy Policy
-        </Link>
-        <span className="mx-2">|</span>
-        <Link href="/about" className="hover:underline">
-          About 6degrees
-        </Link>
-        <span className="mx-2">|</span>
-        <Link href="/contact" className="hover:underline">
-          Contact
-        </Link>
-      </div>
     </div>
   );
 }
